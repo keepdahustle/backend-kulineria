@@ -61,4 +61,15 @@ class Culinary extends Model
             }
         });
     }
+
+    /**
+     * Hitung dan update rating berdasarkan approved reviews
+     * FIX: Method ini dipanggil saat review di-approve
+     */
+    public function recalculateRating()
+    {
+        $averageRating = $this->approvedReviews()->avg('rating') ?? 0;
+        $this->update(['rating' => $averageRating]);
+        return $averageRating;
+    }
 }

@@ -94,6 +94,15 @@ class ReviewController extends Controller
     {
         $review = Review::findOrFail($id);
         $review->update(['status' => $request->status]);
-        return response()->json(['success' => true]);
+        
+        // FIX: Jika status di-approve, hitung dan update rating di Culinary
+        if ($request->status === 'approved') {
+            $culinary = Culinary::find($review->culinary_id);
+            if ($culinary) {
+                $culinary->recalculateRating();
+            }
+        }
+        
+        return response()->json(['success' => true, 'message' => 'Status ulasan diperbarui dan rating produk terupdate']);
     }
 }
